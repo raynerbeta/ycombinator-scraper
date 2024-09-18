@@ -31,9 +31,7 @@ def retrieve_entries():
             else:
                 comments = 0
             entries.append(
-                Entry(
-                    number=number, title=title, points=points, comments=comments
-                )
+                Entry(number=number, title=title, points=points, comments=comments)
             )
             if len(entries) == DESIRED_ENTRIES:
                 return entries
@@ -47,13 +45,12 @@ def entries_view(request):
     # entries = session["entries"]
     entries = retrieve_entries()
     form = FilterForm(request.GET)
+    view_entries = entries
     if form.is_valid():
-        filter = form.cleaned_data.get("filter_by")
+        filter_by = form.cleaned_data.get("filter")
         # Pending filtering entries
-        if filter == "filter_1":
-            pass
-            # entries = []
-        elif filter == "filter_2":
-            pass
-            # entries = []
-    return render(request, "entries.html", {"entries": entries, "form": form})
+        if filter_by == "filter_1":
+            view_entries = Entry.apply_filter_1(entries)
+        elif filter_by == "filter_2":
+            view_entries = Entry.apply_filter_2(entries)
+    return render(request, "entries.html", {"entries": view_entries, "form": form})

@@ -3,16 +3,6 @@ from django.urls import reverse
 from .models import Entry
 
 
-# Utilities
-def generate_entries(to_dict=False, size=3):
-    """Utility for faking entries."""
-    entries = []
-    for i in range(size):
-        entry = Entry(i, f"Entry #{i}", i**2, i**3)
-        entries.append(entry.to_dict() if to_dict else entry)
-    return entries
-
-
 # # Create your tests here.
 # class SessionStorageTest(TestCase):
 #     """Class for testing session storage."""
@@ -58,10 +48,90 @@ class EntryTest(TestCase):
         self.assertEqual(entry.comments, 3)
 
     def test_count_words(self):
-        """Test count words."""
+        """Test count words method."""
         entry = Entry(1, "Title with four words", 2, 3)
         self.assertEqual(entry.words, 4)
         entry = Entry(4, "This is - a self-explained example", 5, 6)
         self.assertEqual(entry.words, 5)
         entry = Entry(1, "- -Title- with ? 3", 2, 3)
+        self.assertEqual(entry.words, 2)
+        entry = Entry(number=6, title="Llama 3.1 Omni Model", points=90, comments=7)
         self.assertEqual(entry.words, 3)
+
+    def test_apply_filter_1(self):
+        """Test filter 1 method."""
+        entries = [
+            Entry(number=4, title="Comic Mono", points=34, comments=6),
+            Entry(number=6, title="Llama 3.1 Omni Model", points=90, comments=7),
+            Entry(number=22, title="The Dune Shell", points=145, comments=43),
+        ]
+        filtered_entries = Entry.apply_filter_1(entries)
+        self.assertEqual(len(entries), 3)
+        self.assertEqual(len(filtered_entries), 0)
+        entries.extend(
+            [
+                Entry(
+                    number=28,
+                    title="Knowledge graphs using Ollama and Embeddings to answer and visualizing queries",
+                    points=74,
+                    comments=7,
+                ),
+                Entry(
+                    number=10,
+                    title="Meticulous (YC S21) is hiring to eliminate UI tests",
+                    points=0,
+                    comments=5,
+                ),
+                Entry(
+                    number=18,
+                    title="Text makeup – a tool to decode and explore Unicode strings",
+                    points=21,
+                    comments=4,
+                ),
+            ]
+        )
+        filtered_entries = Entry.apply_filter_1(entries)
+        self.assertEqual(len(entries), 6)
+        self.assertEqual(len(filtered_entries), 3)
+        self.assertEqual(filtered_entries[0].number, 18)
+        self.assertEqual(filtered_entries[1].number, 10)
+        self.assertEqual(filtered_entries[2].number, 28)
+
+    def test_apply_filter_2(self):
+        """Test filter 2 method."""
+        entries = [
+            Entry(number=22, title="The Dune Shell", points=145, comments=43),
+            Entry(number=6, title="Llama 3.1 Omni Model", points=90, comments=7),
+            Entry(number=4, title="Comic Mono", points=34, comments=6),
+        ]
+        filtered_entries = Entry.apply_filter_2(entries)
+        self.assertEqual(len(entries), 3)
+        self.assertEqual(len(filtered_entries), 3)
+        self.assertEqual(filtered_entries[0].number, 4)
+        self.assertEqual(filtered_entries[1].number, 6)
+        self.assertEqual(filtered_entries[2].number, 22)
+        entries.extend(
+            [
+                Entry(
+                    number=10,
+                    title="Meticulous (YC S21) is hiring to eliminate UI tests",
+                    points=0,
+                    comments=0,
+                ),
+                Entry(
+                    number=18,
+                    title="Text makeup – a tool to decode and explore Unicode strings",
+                    points=21,
+                    comments=0,
+                ),
+                Entry(
+                    number=28,
+                    title="Knowledge graphs using Ollama and Embeddings to answer and visualizing queries",
+                    points=74,
+                    comments=7,
+                ),
+            ]
+        )
+        filtered_entries = Entry.apply_filter_2(entries)
+        self.assertEqual(len(entries), 6)
+        self.assertEqual(len(filtered_entries), 3)

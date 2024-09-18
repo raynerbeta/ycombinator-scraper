@@ -1,4 +1,5 @@
 import string
+import copy
 
 
 class Entry:
@@ -19,10 +20,7 @@ class Entry:
     def __count_words__(self) -> int:
         """Method for counting words and exclude symbols."""
         words = self.title.split()
-        valid_words = []
-        for word in words:
-            if word.replace("-", "").isalnum():
-                valid_words.append(word)
+        valid_words = [word for word in words if any(char.isalpha() for char in word)]
         return len(valid_words)
 
     def to_dict(self) -> dict:
@@ -43,3 +41,28 @@ class Entry:
             points=data["points"],
             comments=data["comments"],
         )
+
+    @classmethod
+    def apply_filter_1(cls, data):
+        """
+        Method for filtering entries with more than five words in the title
+        and ordering by the number of comments.
+        """
+        entries = copy.deepcopy(data)
+        entries = filter(lambda entry: entry.words > 5, entries)
+        entries = sorted(
+            entries,
+            key=lambda entry: entry.comments,
+        )
+        return entries
+
+    @classmethod
+    def apply_filter_2(cls, data):
+        """
+        Method for filtering entries with less than or equal to five words in the title
+        and ordering by points.
+        """
+        entries = copy.deepcopy(data)
+        entries = filter(lambda entry: entry.words <= 5, entries)
+        entries = sorted(entries, key=lambda entry: entry.points)
+        return entries
