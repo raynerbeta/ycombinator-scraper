@@ -4,18 +4,56 @@ from bs4 import BeautifulSoup
 from .models import Entry
 from .forms import FilterForm
 
+URL = "https://news.ycombinator.com/"
+DESIRED_ENTRIES = 30
+
+
+def retrieve_entries():
+    while True:
+        response = requests.get(URL)
+        html_content = response.content
+        soup = BeautifulSoup(html_content, "html.parser")
+        rows = soup.find_all("tr", class_="athing")
+        entries = []
+        for row in rows:
+            number = int(row.find("span", class_="rank").text.replace(".", "").strip())
+            td_title = row.find_all("td", class_="title")[1]
+            title = td_title.find("a").text.strip()
+            subtext = row.find_next_sibling("tr").find("td", class_="subtext")
+            points = subtext.find("span", class_="score")
+            if points:
+                points = int(points.text.replace(" points", "").strip())
+            else:
+                points = 0
+            comments = subtext.find_all("a")[-1].text.strip()
+            if "comment" in comments:
+                comments = int(comments.split()[0].replace("\xa0", ""))
+            else:
+                comments = 0
+            entries.append(
+                Entry(
+                    number=number, title=title, points=points, comments=comments
+                )
+            )
+            if len(entries) == DESIRED_ENTRIES:
+                return entries
+
 
 def entries_view(request):
-    if "entries" not in request.session:
-        # Pending update of entries
-        request.session["entries"] = []
-    entries = request.session["entries"]
+    # session = request.session
+    # if "entries" not in session:
+    #     session["entries"] = retrieve_entries()
+    #     session.save()
+    # entries = session["entries"]
+    entries = retrieve_entries()
     form = FilterForm(request.GET)
     if form.is_valid():
         filter = form.cleaned_data.get("filter_by")
         # Pending filtering entries
         if filter == "filter_1":
-            entries = []
+            pass
+            # entries = []
         elif filter == "filter_2":
-            entries = []
+            pass
+            # entries = []
     return render(request, "entries.html", {"entries": entries, "form": form})
