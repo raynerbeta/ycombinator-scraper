@@ -1,3 +1,5 @@
+"""File for pytest configuration."""
+
 import pytest
 
 
