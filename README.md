@@ -1,4 +1,4 @@
-# Web Scraper For [Hacker News](hacker_news)
+# Web Scraper For [Hacker News][hacker_news]
 
 ## Overview
 Coding exercise for Entry-Mid Level Software Developer - Stack Builders.
