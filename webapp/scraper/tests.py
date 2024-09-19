@@ -172,9 +172,9 @@ class TestEntry(TestCase):
     def test_apply_filter_2_sorting(self):
         """It should sort items by points."""
         entries = [
-            Entry(22, "The Dune Shell", 145, 43),
-            Entry(6, "Llama 3.1 Omni Model", 90, 7),
-            Entry(4, "Comic Mono", 34, 6),
+            Entry(22, "The Dune Shell", 145, 6),
+            Entry(6, "Llama 3.1 Omni Model", 90, 43),
+            Entry(4, "Comic Mono", 34, 7),
         ]
         filtered_entries = Entry.apply_filter_2(entries)
         self.assertEqual(len(entries), 3)

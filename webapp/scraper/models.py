@@ -1,5 +1,5 @@
 import string
-import copy
+from operator import attrgetter
 
 
 def to_int(value) -> int:
@@ -30,8 +30,8 @@ class Entry:
         self.words = self.__count_words__()
 
     def __repr__(self) -> str:
-        """Custom representation of the class object."""
-        return f"Entry({self.number},{self.title},{self.title},{self.points},{self.comments})"
+        """Custom representation of the object."""
+        return f"Entry({self.number},{self.title},{self.points},{self.comments},{self.words})"
 
     def __count_words__(self) -> int:
         """Method for counting words and exclude symbols."""
@@ -51,6 +51,10 @@ class Entry:
             "comments": self.comments,
         }
 
+    """For sorting we use the sorted function because it's time complexity efficient.
+    Additionally, we use the attrgetter function due to a slightly faster performance than a lambda
+    and its declarative approach."""
+
     @classmethod
     def from_dict(cls, data):
         """Class method for yielding an Entry object from a dictionary."""
@@ -62,26 +66,22 @@ class Entry:
         )
 
     @classmethod
-    def apply_filter_1(cls, data):
+    def apply_filter_1(cls, entries):
         """
         Method for filtering entries with more than five words in the title
         and ordering by the number of comments.
         """
-        entries = copy.deepcopy(data)
         entries = filter(lambda entry: entry.words > 5, entries)
-        entries = sorted(
+        return sorted(
             entries,
-            key=lambda entry: entry.comments,
+            key=attrgetter("comments"),
         )
-        return entries
 
     @classmethod
-    def apply_filter_2(cls, data):
+    def apply_filter_2(cls, entries):
         """
         Method for filtering entries with less than or equal to five words in the title
         and ordering by points.
         """
-        entries = copy.deepcopy(data)
         entries = filter(lambda entry: entry.words <= 5, entries)
-        entries = sorted(entries, key=lambda entry: entry.points)
-        return entries
+        return sorted(entries, key=attrgetter("points"))

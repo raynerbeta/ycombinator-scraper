@@ -43,11 +43,10 @@ def entries_view(request):
         session.save()
     entries = [Entry.from_dict(entry) for entry in session["entries"]]
     form = FilterForm(request.GET)
-    view_entries = entries
     if form.is_valid():
         filter_by = form.cleaned_data.get("filter")
         if filter_by == "filter_1":
-            view_entries = Entry.apply_filter_1(entries)
+            entries = Entry.apply_filter_1(entries)
         elif filter_by == "filter_2":
-            view_entries = Entry.apply_filter_2(entries)
-    return render(request, "entries.html", {"entries": view_entries, "form": form})
+            entries = Entry.apply_filter_2(entries)
+    return render(request, "entries.html", {"entries": entries, "form": form})
