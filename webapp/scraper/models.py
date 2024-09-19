@@ -19,7 +19,10 @@ class Entry:
 
     def __count_words__(self) -> int:
         """Method for counting words and exclude symbols."""
+        # Split title into words based on spaces
         words = self.title.split()
+        # Use list comprehension for evaluating each word
+        # And only adding valid words (that contains at least 1 alphabetic character)
         valid_words = [word for word in words if any(char.isalpha() for char in word)]
         return len(valid_words)
 

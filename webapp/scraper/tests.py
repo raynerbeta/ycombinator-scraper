@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from .models import Entry
-
+from .views import retrieve_entries
 
 # # Create your tests here.
 # class SessionStorageTest(TestCase):
@@ -48,7 +48,7 @@ class EntryTest(TestCase):
         self.assertEqual(entry.comments, 3)
 
     def test_count_words(self):
-        """Test count words method."""
+        """Test count_words method ."""
         entry = Entry(1, "Title with four words", 2, 3)
         self.assertEqual(entry.words, 4)
         entry = Entry(4, "This is - a self-explained example", 5, 6)
@@ -59,7 +59,7 @@ class EntryTest(TestCase):
         self.assertEqual(entry.words, 3)
 
     def test_apply_filter_1(self):
-        """Test filter 1 method."""
+        """Test apply_filter_1 method only returns items with more than five words in title."""
         entries = [
             Entry(number=4, title="Comic Mono", points=34, comments=6),
             Entry(number=6, title="Llama 3.1 Omni Model", points=90, comments=7),
@@ -90,15 +90,62 @@ class EntryTest(TestCase):
                 ),
             ]
         )
-        filtered_entries = Entry.apply_filter_1(entries)
         self.assertEqual(len(entries), 6)
+        self.assertEqual(len(Entry.apply_filter_1(entries)), 3)
+
+    def test_apply_filter_1_sorting(self):
+        """Test apply_filter_1 method sorts items by number of comments."""
+        entries = [
+            Entry(number=4, title="Comic Mono", points=34, comments=6),
+            Entry(
+                number=28,
+                title="Knowledge graphs using Ollama and Embeddings to answer and visualizing queries",
+                points=74,
+                comments=7,
+            ),
+            Entry(
+                number=10,
+                title="Meticulous (YC S21) is hiring to eliminate UI tests",
+                points=0,
+                comments=5,
+            ),
+            Entry(
+                number=18,
+                title="Text makeup – a tool to decode and explore Unicode strings",
+                points=21,
+                comments=4,
+            ),
+            Entry(number=22, title="The Dune Shell", points=145, comments=43),
+        ]
+        filtered_entries = Entry.apply_filter_1(entries)
+        self.assertEqual(len(entries), 5)
         self.assertEqual(len(filtered_entries), 3)
         self.assertEqual(filtered_entries[0].number, 18)
         self.assertEqual(filtered_entries[1].number, 10)
         self.assertEqual(filtered_entries[2].number, 28)
 
     def test_apply_filter_2(self):
-        """Test filter 2 method."""
+        """Test apply_filter_2 method only returns items with less than or equal to five words in title."""
+        entries = [
+            Entry(number=22, title="The Dune Shell New Story", points=145, comments=43),
+            Entry(number=6, title="Llama 3.1 Omni Model", points=90, comments=7),
+            Entry(number=4, title="Comic Mono", points=34, comments=6),
+        ]
+        self.assertEqual(len(entries), 3)
+        self.assertEqual(len(Entry.apply_filter_2(entries)), 3)
+        entries.append(
+            Entry(
+                number=10,
+                title="Meticulous (YC S21) is hiring to eliminate UI tests",
+                points=0,
+                comments=0,
+            )
+        )
+        self.assertEqual(len(entries), 4)
+        self.assertEqual(len(Entry.apply_filter_2(entries)), 3)
+
+    def test_apply_filter_2_sorting(self):
+        """Test apply_filter_2 method sorts items by points."""
         entries = [
             Entry(number=22, title="The Dune Shell", points=145, comments=43),
             Entry(number=6, title="Llama 3.1 Omni Model", points=90, comments=7),
@@ -118,20 +165,15 @@ class EntryTest(TestCase):
                     points=0,
                     comments=0,
                 ),
-                Entry(
-                    number=18,
-                    title="Text makeup – a tool to decode and explore Unicode strings",
-                    points=21,
-                    comments=0,
-                ),
-                Entry(
-                    number=28,
-                    title="Knowledge graphs using Ollama and Embeddings to answer and visualizing queries",
-                    points=74,
-                    comments=7,
-                ),
             ]
         )
         filtered_entries = Entry.apply_filter_2(entries)
-        self.assertEqual(len(entries), 6)
+        self.assertEqual(len(entries), 4)
         self.assertEqual(len(filtered_entries), 3)
+
+
+class ViewTest(TestCase):
+    def test_retrieve_entries(self):
+        """Test retrieve_entries function returns only 30 items."""
+        entries = retrieve_entries()
+        self.assertEqual(len(entries), 30)
