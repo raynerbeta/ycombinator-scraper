@@ -2,15 +2,31 @@ import string
 import copy
 
 
+def to_int(value) -> int:
+    """Function for casting a given value into an int.
+    Only tries conversion when a string is provided.
+    If an exception occurs or type is anything but string, returns 0."""
+    t = type(value)
+    if t == int:
+        return value
+    if t == str:
+        try:
+            return int(value)
+        except:
+            return 0
+    else:
+        return 0
+
+
 class Entry:
     """Class for handling entries."""
 
     def __init__(self, number: int, title: string, points: int, comments: int) -> None:
         """Object initialization."""
-        self.number = number
-        self.title = title
-        self.points = points
-        self.comments = comments
+        self.number = to_int(number)
+        self.title = str(title)
+        self.points = to_int(points)
+        self.comments = to_int(comments)
         self.words = self.__count_words__()
 
     def __repr__(self) -> str:

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from .models import Entry
+from .models import Entry, to_int
 from .views import retrieve_entries
 
 # # Create your tests here.
@@ -37,56 +37,68 @@ from .views import retrieve_entries
 
 
 class EntryTest(TestCase):
-    """Class for testing Entry class."""
+    """Class for testing Entry class and a function related."""
+
+    def test_to_int(self):
+        """It should cast values correctly."""
+        self.assertEqual(to_int(1), 1)
+        self.assertEqual(to_int("13"), 13)
+        self.assertEqual(to_int("a"), 0)
+        self.assertEqual(to_int(True), 0)
+        self.assertEqual(to_int(None), 0)
 
     def test_entry_initialization(self):
-        """Test entry object initialization."""
+        """It should create entry objects."""
         entry = Entry(1, "Title", 2, 3)
         self.assertEqual(entry.number, 1)
         self.assertEqual(entry.title, "Title")
         self.assertEqual(entry.points, 2)
         self.assertEqual(entry.comments, 3)
+        entry = Entry("1", 13, "x", True)
+        self.assertEqual(entry.number, 1)
+        self.assertEqual(entry.title, "13")
+        self.assertEqual(entry.points, 0)
+        self.assertEqual(entry.comments, 0)
 
     def test_count_words(self):
-        """Test count_words method ."""
+        """It should return the aproppriate number of words."""
         entry = Entry(1, "Title with four words", 2, 3)
         self.assertEqual(entry.words, 4)
         entry = Entry(4, "This is - a self-explained example", 5, 6)
         self.assertEqual(entry.words, 5)
         entry = Entry(1, "- -Title- with ? 3", 2, 3)
         self.assertEqual(entry.words, 2)
-        entry = Entry(number=6, title="Llama 3.1 Omni Model", points=90, comments=7)
+        entry = Entry(6, "Llama 3.1 Omni Model", 90, 7)
         self.assertEqual(entry.words, 3)
 
     def test_apply_filter_1(self):
-        """Test apply_filter_1 method only returns items with more than five words in title."""
+        """It should only return items with more than five words in title."""
         entries = [
-            Entry(number=4, title="Comic Mono", points=34, comments=6),
-            Entry(number=6, title="Llama 3.1 Omni Model", points=90, comments=7),
-            Entry(number=22, title="The Dune Shell", points=145, comments=43),
+            Entry(4, "Comic Mono", 34, 6),
+            Entry(6, "Llama 3.1 Omni Model", 90, 7),
+            Entry(22, "The Dune Shell", 145, 43),
         ]
-        filtered_entries = Entry.apply_filter_1(entries)
         self.assertEqual(len(entries), 3)
-        self.assertEqual(len(filtered_entries), 0)
+        self.assertEqual(len(Entry.apply_filter_1(entries)), 0)
         entries.extend(
             [
                 Entry(
-                    number=28,
-                    title="Knowledge graphs using Ollama and Embeddings to answer and visualizing queries",
-                    points=74,
-                    comments=7,
+                    28,
+                    "Knowledge graphs using Ollama and Embeddings to answer and visualizing queries",
+                    74,
+                    7,
                 ),
                 Entry(
-                    number=10,
-                    title="Meticulous (YC S21) is hiring to eliminate UI tests",
-                    points=0,
-                    comments=5,
+                    10,
+                    "Meticulous (YC S21) is hiring to eliminate UI tests",
+                    0,
+                    5,
                 ),
                 Entry(
-                    number=18,
-                    title="Text makeup – a tool to decode and explore Unicode strings",
-                    points=21,
-                    comments=4,
+                    18,
+                    "Text makeup – a tool to decode and explore Unicode strings",
+                    21,
+                    4,
                 ),
             ]
         )
@@ -94,28 +106,28 @@ class EntryTest(TestCase):
         self.assertEqual(len(Entry.apply_filter_1(entries)), 3)
 
     def test_apply_filter_1_sorting(self):
-        """Test apply_filter_1 method sorts items by number of comments."""
+        """It should sort items by number of comments."""
         entries = [
-            Entry(number=4, title="Comic Mono", points=34, comments=6),
+            Entry(4, "Comic Mono", 34, 6),
             Entry(
-                number=28,
-                title="Knowledge graphs using Ollama and Embeddings to answer and visualizing queries",
-                points=74,
-                comments=7,
+                28,
+                "Knowledge graphs using Ollama and Embeddings to answer and visualizing queries",
+                74,
+                7,
             ),
             Entry(
-                number=10,
-                title="Meticulous (YC S21) is hiring to eliminate UI tests",
-                points=0,
-                comments=5,
+                10,
+                "Meticulous (YC S21) is hiring to eliminate UI tests",
+                0,
+                5,
             ),
             Entry(
-                number=18,
-                title="Text makeup – a tool to decode and explore Unicode strings",
-                points=21,
-                comments=4,
+                18,
+                "Text makeup – a tool to decode and explore Unicode strings",
+                21,
+                4,
             ),
-            Entry(number=22, title="The Dune Shell", points=145, comments=43),
+            Entry(22, "The Dune Shell", 145, 43),
         ]
         filtered_entries = Entry.apply_filter_1(entries)
         self.assertEqual(len(entries), 5)
@@ -125,31 +137,31 @@ class EntryTest(TestCase):
         self.assertEqual(filtered_entries[2].number, 28)
 
     def test_apply_filter_2(self):
-        """Test apply_filter_2 method only returns items with less than or equal to five words in title."""
+        """It should only return items with less than or equal to five words in title."""
         entries = [
-            Entry(number=22, title="The Dune Shell New Story", points=145, comments=43),
-            Entry(number=6, title="Llama 3.1 Omni Model", points=90, comments=7),
-            Entry(number=4, title="Comic Mono", points=34, comments=6),
+            Entry(22, "The Dune Shell New Story", 145, 43),
+            Entry(6, "Llama 3.1 Omni Model", 90, 7),
+            Entry(4, "Comic Mono", 34, 6),
         ]
         self.assertEqual(len(entries), 3)
         self.assertEqual(len(Entry.apply_filter_2(entries)), 3)
         entries.append(
             Entry(
-                number=10,
-                title="Meticulous (YC S21) is hiring to eliminate UI tests",
-                points=0,
-                comments=0,
+                10,
+                "Meticulous (YC S21) is hiring to eliminate UI tests",
+                0,
+                0,
             )
         )
         self.assertEqual(len(entries), 4)
         self.assertEqual(len(Entry.apply_filter_2(entries)), 3)
 
     def test_apply_filter_2_sorting(self):
-        """Test apply_filter_2 method sorts items by points."""
+        """It should sort items by points."""
         entries = [
-            Entry(number=22, title="The Dune Shell", points=145, comments=43),
-            Entry(number=6, title="Llama 3.1 Omni Model", points=90, comments=7),
-            Entry(number=4, title="Comic Mono", points=34, comments=6),
+            Entry(22, "The Dune Shell", 145, 43),
+            Entry(6, "Llama 3.1 Omni Model", 90, 7),
+            Entry(4, "Comic Mono", 34, 6),
         ]
         filtered_entries = Entry.apply_filter_2(entries)
         self.assertEqual(len(entries), 3)
@@ -160,10 +172,10 @@ class EntryTest(TestCase):
         entries.extend(
             [
                 Entry(
-                    number=10,
-                    title="Meticulous (YC S21) is hiring to eliminate UI tests",
-                    points=0,
-                    comments=0,
+                    10,
+                    "Meticulous (YC S21) is hiring to eliminate UI tests",
+                    0,
+                    0,
                 ),
             ]
         )
@@ -174,6 +186,6 @@ class EntryTest(TestCase):
 
 class ViewTest(TestCase):
     def test_retrieve_entries(self):
-        """Test retrieve_entries function returns only 30 items."""
+        """It should only return 30 items."""
         entries = retrieve_entries()
         self.assertEqual(len(entries), 30)
