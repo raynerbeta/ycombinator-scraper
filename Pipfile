@@ -9,6 +9,9 @@ beautifulsoup4 = "*"
 requests = "*"
 
 [dev-packages]
+pytest = "*"
+pytest-django = "*"
+pytest-sugar = "*"
 
 [requires]
 python_version = "3.12"

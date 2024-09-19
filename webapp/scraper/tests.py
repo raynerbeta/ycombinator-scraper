@@ -4,7 +4,7 @@ from .models import Entry, to_int
 from .views import retrieve_entries
 
 
-class SessionStorageTest(TestCase):
+class TestSessionStorage(TestCase):
     """Class for testing session storage."""
 
     def setUp(self):
@@ -23,7 +23,7 @@ class SessionStorageTest(TestCase):
         self.assertEqual(len(session["entries"]), 30)
 
 
-class ViewTest(TestCase):
+class TestView(TestCase):
     """Class for testing the main view of the app."""
 
     def setUp(self):
@@ -49,7 +49,7 @@ class ViewTest(TestCase):
         self.assertEqual(len(session.get("entries", [])), 30)
 
 
-class EntryTest(TestCase):
+class TestEntry(TestCase):
     """Class for testing Entry class and a function related."""
 
     def test_to_int(self):
