@@ -3,37 +3,50 @@ from django.urls import reverse
 from .models import Entry, to_int
 from .views import retrieve_entries
 
-# # Create your tests here.
-# class SessionStorageTest(TestCase):
-#     """Class for testing session storage."""
 
-#     def setUp(self):
-#         """Clear session storage for every test case."""
-#         self.client.session.clear()
+class SessionStorageTest(TestCase):
+    """Class for testing session storage."""
 
-#     def test_session_storage_for_entries(self):
-#         """Test session storage to save and retrieve entries."""
-#         session = self.client.session
-#         session["entries"] = []
-#         session.save()
-#         self.assertEqual(len(session["entries"]), 0)
-#         session["entries"] = generate_entries(True)
-#         session.save()
-#         self.assertEqual(len(session["entries"]), 3)
+    def setUp(self):
+        """Runs before each test and clear session storage."""
+        self.client.session.clear()
+
+    def test_session_storage_for_entries(self):
+        """It should save entries in session storage and then retrieve them."""
+        session = self.client.session
+        # Check entries is empty
+        self.assertNotIn("entries", session)
+        # We save entries
+        session["entries"] = retrieve_entries(True)
+        session.save()
+        # Check entries were saved
+        self.assertEqual(len(session["entries"]), 30)
 
 
-# class ViewTest(TestCase):
-#     """Class for testing the main view of the app."""
+class ViewTest(TestCase):
+    """Class for testing the main view of the app."""
 
-#     def setUp(self):
-#         """Clear session storage for every test case."""
-#         self.client.session.clear()
+    def setUp(self):
+        """Runs before each test and clear session storage."""
+        self.client.session.clear()
 
-#     def test_view_with_session_data(self):
-#         session = self.client.session
-#         self.assertEqual(session.get("entries"), None)
-#         response = self.client.get(reverse("entries"))
-#         self.assertEqual(len(session.get("entries", [])), 30)
+    def test_retrieve_entries(self):
+        """It should only return 30 items."""
+        entries = retrieve_entries()
+        self.assertEqual(len(entries), 30)
+
+    def test_view_with_session_data(self):
+        """It should render the view and save entries in session storage and then retrieve them."""
+        session = self.client.session
+        # We check session storage is clear
+        self.assertNotIn("entries", session)
+        # Request the view
+        response = self.client.get(reverse("entries"))
+        # We get the updated session
+        session = self.client.session
+        # Check entries were saved
+        self.assertIn("entries", session)
+        self.assertEqual(len(session.get("entries", [])), 30)
 
 
 class EntryTest(TestCase):
@@ -182,10 +195,3 @@ class EntryTest(TestCase):
         filtered_entries = Entry.apply_filter_2(entries)
         self.assertEqual(len(entries), 4)
         self.assertEqual(len(filtered_entries), 3)
-
-
-class ViewTest(TestCase):
-    def test_retrieve_entries(self):
-        """It should only return 30 items."""
-        entries = retrieve_entries()
-        self.assertEqual(len(entries), 30)
