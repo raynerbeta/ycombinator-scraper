@@ -21,13 +21,15 @@ def to_int(value) -> int:
 class Entry:
     """Class for handling entries."""
 
-    def __init__(self, number: int, title: string, points: int, comments: int) -> None:
+    def __init__(
+        self, number: int, title: string, points: int, comments: int, words: int = None
+    ) -> None:
         """Object initialization."""
         self.number = to_int(number)
         self.title = str(title)
         self.points = to_int(points)
         self.comments = to_int(comments)
-        self.words = self.__count_words__()
+        self.words = to_int(words) if words else self.__count_words__()
 
     def __repr__(self) -> str:
         """Custom representation of the object."""
@@ -49,21 +51,23 @@ class Entry:
             "title": self.title,
             "points": self.points,
             "comments": self.comments,
+            "words": self.words,
         }
-
-    """For sorting we use the sorted function because it's time complexity efficient.
-    Additionally, we use the attrgetter function due to a slightly faster performance than a lambda
-    and its declarative approach."""
 
     @classmethod
     def from_dict(cls, data):
         """Class method for yielding an Entry object from a dictionary."""
         return cls(
-            number=data["number"],
-            title=data["title"],
-            points=data["points"],
-            comments=data["comments"],
+            data["number"],
+            data["title"],
+            data["points"],
+            data["comments"],
+            data["words"],
         )
+
+    """For sorting we use the sorted function because it's time complexity efficient.
+    Additionally, we use the attrgetter function due to a slightly faster performance than a lambda
+    and its declarative approach."""
 
     @classmethod
     def apply_filter_1(cls, entries):

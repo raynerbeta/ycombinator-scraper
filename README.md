@@ -35,7 +35,7 @@ For executing all test cases only one command is needed:
 ```bash
 pytest
 ```
-> **Note:** if the virtual environment is not running, the following command can be run instead. Make sure you're under the django project root folder **webapp**.
+> **Note:** if the you aren't inside the virtual environment (but it's created), the following command can be run instead. Make sure you're under the django project root folder **webapp**.
 > ```bash
 > pipenv run pytest
 > ```
