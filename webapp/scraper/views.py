@@ -4,7 +4,9 @@ from bs4 import BeautifulSoup
 from .models import Entry
 from .forms import FilterForm
 
+# URL for scraping
 BASE_URL = "https://news.ycombinator.com/"
+# Number of entries to retrieve
 DESIRED_ENTRIES = 30
 
 
