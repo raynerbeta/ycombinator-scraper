@@ -2,7 +2,9 @@ from django.test import TestCase
 from django.urls import reverse
 from .models import Entry, to_int
 from .views import retrieve_entries
-
+from urllib.parse import urlencode
+from unittest.mock import patch
+import requests
 
 class TestSessionStorage(TestCase):
     """Class for testing session storage."""
@@ -16,7 +18,7 @@ class TestSessionStorage(TestCase):
         session = self.client.session
         # Check entries is empty
         self.assertNotIn("entries", session)
-        # We save entries
+        # Save entries
         session["entries"] = retrieve_entries(True)
         session.save()
         # Check entries were saved
@@ -31,22 +33,50 @@ class TestView(TestCase):
         self.client.session.clear()
 
     def test_retrieve_entries(self):
-        """It should only return 30 items."""
+        """It should return specified number of items, 30 by default."""
         entries = retrieve_entries()
         self.assertEqual(len(entries), 30)
+        entries = retrieve_entries(False, 31)
+        self.assertEqual(len(entries), 31)
+
+    # Use decorator for patching get function an raise an error
+    @patch("scraper.views.requests.get")
+    def test_retrieve_entries_exception(self, mock):
+        """It should return an empty list when an exception occurs inside the function."""
+        # Assign exception to mock
+        mock.side_effect = requests.exceptions.HTTPError("HTTP error occurred")
+        # Render the view
+        self.client.get(reverse("entries"))
+        # Get the updated session
+        session = self.client.session
+        # Check entries were saved
+        self.assertIn("entries", session)
+        self.assertEqual(len(session.get("entries", [])), 0)
 
     def test_view_with_session_data(self):
         """It should render the view and save entries in session storage and then retrieve them."""
         session = self.client.session
-        # We check session storage is clear
+        # Check session storage is clear
         self.assertNotIn("entries", session)
-        # Request the view
-        response = self.client.get(reverse("entries"))
-        # We get the updated session
+        # Request the view without filters
+        self.client.get(reverse("entries"))
+        # Get the updated session
         session = self.client.session
         # Check entries were saved
         self.assertIn("entries", session)
         self.assertEqual(len(session.get("entries", [])), 30)
+        # Request the view with filter 1
+        self.client.get(f"{reverse("entries")}?{urlencode({"filter":"filter_1"})}")
+        # Get the updated session
+        session = self.client.session
+        # Check entries were saved
+        self.assertIn("entries", session)
+        # Request the view with filter 2
+        self.client.get(f"{reverse("entries")}?{urlencode({"filter":"filter_2"})}")
+        # Get the updated session
+        session = self.client.session
+        # Check entries were saved
+        self.assertIn("entries", session)
 
 
 class TestEntry(TestCase):
@@ -72,6 +102,10 @@ class TestEntry(TestCase):
         self.assertEqual(entry.title, "13")
         self.assertEqual(entry.points, 0)
         self.assertEqual(entry.comments, 0)
+
+    def test_entry_repr(self):
+        entry = Entry(1, "Title", 2, 3)
+        self.assertEqual(str(entry), "Entry(1,Title,2,3,1)")
 
     def test_count_words(self):
         """It should return the aproppriate number of words."""

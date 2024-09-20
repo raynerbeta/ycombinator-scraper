@@ -12,6 +12,7 @@ requests = "*"
 pytest = "*"
 pytest-django = "*"
 pytest-sugar = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.12"

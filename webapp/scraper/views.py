@@ -10,7 +10,7 @@ BASE_URL = "https://news.ycombinator.com/"
 DESIRED_ENTRIES = 30
 
 
-def retrieve_entries(to_dict=False):
+def retrieve_entries(to_dict=False, desired_entries=DESIRED_ENTRIES):
     """Function used to scrape news from specific URL."""
     # Initialize entries with an empty list
     entries = []
@@ -59,7 +59,7 @@ def retrieve_entries(to_dict=False):
                 # Append dictionary or object considering to_dict
                 entries.append(entry.to_dict() if to_dict else entry)
                 # Return condition for stopping the external while
-                if len(entries) == DESIRED_ENTRIES:
+                if len(entries) == desired_entries:
                     return entries
             # Move to the next page
             current_page += 1
