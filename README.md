@@ -44,7 +44,7 @@ pytest
 > ```bash
 > pip install pipenv
 > ```
-1. Install dependencies: `pipenv install`
+1. Install dependencies: `pipenv install --dev`
 1. Activate the virtual environment: `pipenv shell`
 1. Change to the django project directory: `cd webapp/`
 1. Run test cases and check all pass: `pytest`
