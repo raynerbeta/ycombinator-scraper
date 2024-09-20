@@ -30,11 +30,20 @@ Coding exercise for Entry-Mid Level Software Developer role at Stack Builders.
 ## Testing
 The project was built applying TDD (Test Driven Development), therefore has test cases to check the correctness of the code. Additionally, the framework **pytest** (in addition with 2 plugins) was used to simplify the testing process.
 
-For executing all test cases only one command needs to be run: `pytest`
-> **Note:** if the virtual environment is not running, the command `pipenv run pytest` can be run instead. Make sure you're under the django project root folder **webapp**.
+For executing all test cases only one command is needed:
+```bash
+pytest
+```
+> **Note:** if the virtual environment is not running, the following command can be run instead. Make sure you're under the django project root folder **webapp**.
+> ```bash
+> pipenv run pytest
+> ```
 
 ## Usage
-> **Note:** a global installation of **pipenv** is required for installing dependencies and then run the app. If not installed, use the command: `pip install pipenv`
+> **Note:** a global installation of **pipenv** is required for installing dependencies and then run the app. If not installed, use the following command:
+> ```bash
+> pip install pipenv
+> ```
 1. Install dependencies: `pipenv install`
 1. Activate the virtual environment: `pipenv shell`
 1. Change to the django project directory: `cd webapp/`
