@@ -1,6 +1,6 @@
 {
   "name": "Pipenv",
-  "image": "python:3.12",
+  "image": "mcr.microsoft.com/vscode/devcontainers/python:3.12",
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash",
     "python.formatting.provider": "black",
