@@ -1,8 +1,7 @@
 {
   "name": "Pipenv",
-  "image": "mcr.microsoft.com/vscode/devcontainers/python:3.12",
-  "features": {
-    "python": "3.12"
+  "build": {
+    "dockerfile": "Dockerfile"
   },
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash",
