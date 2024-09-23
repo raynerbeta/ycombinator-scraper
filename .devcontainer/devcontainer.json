@@ -3,7 +3,6 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "workspaceFolder": "/workspaces/ycombinator-scraper",
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash",
     "python.formatting.provider": "black",
@@ -14,6 +13,7 @@
     "ms-python.vscode-pylance"
   ],
   "forwardPorts": [8000],
+  "postCreateCommand": "pip install pipenv && pipenv install --dev",
   "remoteEnv": {
     "PYTHONPATH": "${containerWorkspaceFolder}"
   }
