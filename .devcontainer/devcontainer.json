@@ -1,7 +1,8 @@
 {
   "name": "Pipenv",
-  "build": {
-    "dockerfile": "Dockerfile"
+  "image": "mcr.microsoft.com/vscode/devcontainers/python:3.12",
+  "features": {
+    "python": "3.12"
   },
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash",
@@ -12,7 +13,7 @@
     "ms-python.python",
     "ms-python.vscode-pylance"
   ],
-  "postCreateCommand": "pipenv install --dev && cd webapp/ && pipenv run pytest",
+  "postCreateCommand": "pip install pipenv && pipenv install --dev && cd webapp/ && pipenv run pytest",
   "forwardPorts": [8000],
   "remoteEnv": {
     "PYTHONPATH": "${containerWorkspaceFolder}"
