@@ -4,3 +4,4 @@ USER vscode
 WORKDIR /workspaces/ycombinator-scraper
 COPY Pipfile* ./
 RUN pip install pipenv && pipenv install --dev
+ENV PATH="/home/vscode/.local/bin:${PATH}"
