@@ -12,7 +12,7 @@
     "ms-python.python",
     "ms-python.vscode-pylance"
   ],
-  "postCreateCommand": "pip install pipenv && pipenv install --dev && cd webapp/ && pipenv run pytest",
+  "postCreateCommand": "pip install pipenv && pipenv install --dev",
   "forwardPorts": [8000],
   "remoteEnv": {
     "PYTHONPATH": "${containerWorkspaceFolder}"
